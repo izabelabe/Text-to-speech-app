@@ -110,6 +110,7 @@ class Settings(ctk.CTkToplevel):
                 self.kb.tts.language = 'pl_PL'
             self.kb.buttons['READ'].configure(text='CZYTAJ')
             self.kb.buttons['CLEAR'].configure(text='WYCZYŚĆ')
+            self.kb.buttons['CORRECT'].configure(text='POPRAW')
             self.volume_label.configure(text='Głośność')
             self.rate_label.configure(text='Prędkość')
             self.language_label.configure(text='Język')
@@ -123,6 +124,7 @@ class Settings(ctk.CTkToplevel):
                 self.kb.tts.language = 'en_GB'
             self.kb.buttons['READ'].configure(text='READ')
             self.kb.buttons['CLEAR'].configure(text='CLEAR')
+            self.kb.buttons['CORRECT'].configure(text='CORRECT')
             self.volume_label.configure(text='Volume')
             self.rate_label.configure(text='Rate')
             self.language_label.configure(text='Language')

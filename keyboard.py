@@ -3,8 +3,8 @@ import customtkinter as ctk
 import speech_synthesis as ss
 from PIL import Image
 import settings as st
-from textblob import TextBlob
 from autocorrect import Speller
+import multiprocessing
 
 class Keyboard(ctk.CTk):
     def __init__(self):
@@ -97,6 +97,18 @@ class Keyboard(ctk.CTk):
         else:
             self.buttons['READ'].configure(text='CZYTAJ')
             self.buttons['CLEAR'].configure(text='WYCZYŚĆ')
+            self.buttons['CORRECT'].configure(text='POPRAW')
+
+    def correct(self):
+        txt = self.text_box.get(1.0, tk.END)
+        txt = txt.lower()
+        if self.tts.language != "pl_PL":
+            spell = Speller()
+        else:
+            spell = Speller('pl')
+        corrected = spell(txt)
+        self.text_box.delete(1.0, tk.END)
+        self.text_box.insert(tk.INSERT, corrected.upper())
 
     def select(self, key):
         self.text_box.configure(state="normal")
@@ -122,15 +134,7 @@ class Keyboard(ctk.CTk):
         elif key == 'settings':
             st.Settings(self)
         elif key == 'CORRECT':
-            txt = self.text_box.get(1.0, tk.END)
-            txt = txt.lower()
-            if self.tts.language != "pl_PL":
-                spell = Speller()
-            else:
-                spell = Speller('pl')
-            corrected = spell(txt)
-            self.text_box.delete(1.0, tk.END)
-            self.text_box.insert(tk.INSERT, corrected.upper())
+            self.correct()
         else:
             self.text_box.insert(tk.INSERT, self.buttons[key].cget("text"))
 
@@ -139,7 +143,7 @@ class Keyboard(ctk.CTk):
     def alt(self):
         before = ['A', 'Z', 'X', 'C', 'N', 'L', 'S', 'E', 'O', 'U']
         after = ['Ą', 'Ż', 'Ź', 'Ć', 'Ń', 'Ł', 'Ś', 'Ę', 'Ó', '€']
-        exceptions = ['ALT', 'CLEAR', 'SPACE', 'READ', 'settings', 'Backspace', 'Enter']
+        exceptions = ['ALT', 'CLEAR', 'SPACE', 'READ', 'settings', 'Backspace', 'Enter', 'CORRECT']
         i = 0
         if self.alt_state:
             for char in before:
