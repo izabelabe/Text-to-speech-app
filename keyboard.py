@@ -21,6 +21,7 @@ class Keyboard(ctk.CTk):
         self.buttons = {}
         self.text_box = ctk.CTkTextbox(self, padx=25, pady=25, height=5, font=('Segoe UI Historic', 30, "bold"),
                                        text_color="black", wrap=tk.WORD)
+        self.text_box.configure(state="disabled")
         self.alt_state = False
         for i in range(13):
             self.grid_columnconfigure(i, weight=1)
@@ -138,7 +139,7 @@ class Keyboard(ctk.CTk):
         else:
             self.text_box.insert(tk.INSERT, self.buttons[key].cget("text"))
 
-        self.text_box.configure(state="disabled")
+
 
     def alt(self):
         before = ['A', 'Z', 'X', 'C', 'N', 'L', 'S', 'E', 'O', 'U']
