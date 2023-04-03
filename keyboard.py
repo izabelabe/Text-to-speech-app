@@ -1,9 +1,8 @@
-import time
 import tkinter as tk
 import customtkinter as ctk
 import speech_synthesis as ss
-from PIL import Image
 import settings as st
+from PIL import Image
 from autocorrect import Speller
 from wrapt_timeout_decorator import *
 
@@ -18,10 +17,10 @@ def text_correction(text, polish):
 
     return corrected
 
+
 class Keyboard(ctk.CTk):
     def __init__(self):
         super().__init__()
-        #self.show_startWindow()
         self.title("Keyboard")
         self.configure(padx=25, pady=10)
         self.width = self.winfo_screenwidth()
@@ -92,7 +91,6 @@ class Keyboard(ctk.CTk):
                                                       command=lambda x=key: self.select(x))
                     self.buttons[key].grid(columnspan=2, row=row, column=column + 7, sticky="nsew")
 
-
                 else:
                     img = ctk.CTkImage(light_image=Image.open("img/gear.png"), size=(35, 35))
                     self.buttons[key] = ctk.CTkButton(self, image=img, corner_radius=20, fg_color='black', text="",
@@ -115,8 +113,6 @@ class Keyboard(ctk.CTk):
             self.buttons['CLEAR'].configure(text='WYCZYŚĆ')
             self.buttons['CORRECT'].configure(text='POPRAW')
             self.buttons['SPACE'].configure(text='SPACJA')
-
-
 
     def correct(self):
         txt = self.text_box.get(1.0, tk.END)
@@ -147,8 +143,6 @@ class Keyboard(ctk.CTk):
         message_label.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
         alert_box.overrideredirect(True)
         self.after(2500, alert_box.destroy)
-
-
 
     def select(self, key):
         self.text_box.configure(state="normal")
@@ -194,6 +188,3 @@ class Keyboard(ctk.CTk):
             for key in self.keys:
                 if key not in exceptions:
                     self.buttons[key].configure(text=key)
-
-
-
