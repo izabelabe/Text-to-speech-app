@@ -1,14 +1,27 @@
+import time
 import tkinter as tk
 import customtkinter as ctk
 import speech_synthesis as ss
 from PIL import Image
 import settings as st
 from autocorrect import Speller
-import multiprocessing
+from wrapt_timeout_decorator import *
+
+
+@timeout(1)
+def text_correction(text, polish):
+    if polish:
+        spell = Speller('pl')
+    else:
+        spell = Speller()
+    corrected = spell(text)
+
+    return corrected
 
 class Keyboard(ctk.CTk):
     def __init__(self):
         super().__init__()
+        #self.show_startWindow()
         self.title("Keyboard")
         self.configure(padx=25, pady=10)
         self.width = self.winfo_screenwidth()
@@ -18,11 +31,13 @@ class Keyboard(ctk.CTk):
         self.resizable(True, True)
 
         ctk.set_appearance_mode("dark")
+
         self.buttons = {}
         self.text_box = ctk.CTkTextbox(self, padx=25, pady=25, height=5, font=('Segoe UI Historic', 30, "bold"),
                                        text_color="black", wrap=tk.WORD)
         self.text_box.configure(state="disabled")
         self.alt_state = False
+        self.alert = None
         for i in range(13):
             self.grid_columnconfigure(i, weight=1)
             if i <= 8:
@@ -99,17 +114,41 @@ class Keyboard(ctk.CTk):
             self.buttons['READ'].configure(text='CZYTAJ')
             self.buttons['CLEAR'].configure(text='WYCZYŚĆ')
             self.buttons['CORRECT'].configure(text='POPRAW')
+            self.buttons['SPACE'].configure(text='SPACJA')
+
+
 
     def correct(self):
         txt = self.text_box.get(1.0, tk.END)
         txt = txt.lower()
-        if self.tts.language != "pl_PL":
-            spell = Speller()
+        try:
+            if self.tts.language != "pl_PL":
+                result = text_correction(txt, 0)
+            else:
+                result = text_correction(txt, 1)
+            self.text_box.delete(1.0, tk.END)
+            self.text_box.insert(tk.INSERT, result.upper())
+        except TimeoutError:
+            self.show_alert()
+
+    def show_alert(self):
+        alert_box = ctk.CTkToplevel(self.master)
+        x = (self.width - 400) / 2
+        y = (self.height - 250) / 2
+        alert_box.geometry(f"400x250+{int(x)}+{int(y)}")
+
+        if self.tts.language == "pl_PL":
+            message_label = ctk.CTkLabel(alert_box, text="Błąd korekty tekstu", padx=10, pady=10,
+                                         text_color="#fdd890", font=('Segoe UI Historic', 22, 'bold'))
         else:
-            spell = Speller('pl')
-        corrected = spell(txt)
-        self.text_box.delete(1.0, tk.END)
-        self.text_box.insert(tk.INSERT, corrected.upper())
+            message_label = ctk.CTkLabel(alert_box, text="Error in text correction", padx=10, pady=10,
+                                         text_color="#fdd890", font=('Segoe UI Historic', 22, 'bold'))
+
+        message_label.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+        alert_box.overrideredirect(True)
+        self.after(2500, alert_box.destroy)
+
+
 
     def select(self, key):
         self.text_box.configure(state="normal")
@@ -138,8 +177,6 @@ class Keyboard(ctk.CTk):
             self.correct()
         else:
             self.text_box.insert(tk.INSERT, self.buttons[key].cget("text"))
-
-
 
     def alt(self):
         before = ['A', 'Z', 'X', 'C', 'N', 'L', 'S', 'E', 'O', 'U']
