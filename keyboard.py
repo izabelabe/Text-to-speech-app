@@ -1,3 +1,4 @@
+import time
 import tkinter as tk
 import customtkinter as ctk
 import speech_synthesis as ss
@@ -19,15 +20,20 @@ def text_correction(text, polish):
 
 
 class Keyboard(ctk.CTk):
-    def __init__(self):
+    def __init__(self, finish_flag):
         super().__init__()
         self.title("Keyboard")
+        self.finish_flag = finish_flag
+        self.bind('<Double-Button-1>', self.handler)
         self.configure(padx=25, pady=10)
         self.width = self.winfo_screenwidth()
         self.height = self.winfo_screenheight() - 70
-        self.geometry("%dx%d+%d+%d" % (self.width, self.height, -8, -1))
+        self.geometry("%dx%d+%d+%d" % (self.width, self.height, -9, -1))
         self.minsize(300, 350)
         self.resizable(True, True)
+        self.wm_attributes("-topmost", 1)
+
+        self.attributes('-fullscreen', True)
 
         ctk.set_appearance_mode("dark")
 
@@ -114,6 +120,14 @@ class Keyboard(ctk.CTk):
             self.buttons['CORRECT'].configure(text='POPRAW')
             self.buttons['SPACE'].configure(text='SPACJA')
 
+    def handler(self, e):
+        while True:
+            if self.finish_flag.is_set():
+                self.destroy()
+                break
+            else:
+                time.sleep(1)
+
     def correct(self):
         txt = self.text_box.get(1.0, tk.END)
         txt = txt.lower()
@@ -166,6 +180,7 @@ class Keyboard(ctk.CTk):
                 self.alt_state = False
             self.alt()
         elif key == 'settings':
+            self.wm_attributes("-topmost", 0)
             st.Settings(self)
         elif key == 'CORRECT':
             self.correct()

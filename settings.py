@@ -11,11 +11,11 @@ class Settings(ctk.CTkToplevel):
         self.title("Settings")
         self.configure(padx=25, pady=10)
         self.geometry("%dx%d+%d+%d" % (
-            self.winfo_screenwidth() / 2, self.winfo_screenheight() / 2, self.winfo_screenwidth() / 4,
-            self.winfo_screenheight() / 4))
-        self.minsize(700, 350)
+            self.winfo_screenwidth() / 2, self.winfo_screenheight() / 2, (self.winfo_screenwidth()-1100)/ 2,
+            (self.winfo_screenheight()-600) / 2))
+        self.minsize(1100, 600)
         self.resizable(True, True)
-
+        self.wm_attributes("-topmost",1)
         # volume
         self.volume_label = ctk.CTkLabel(master=self, text="Volume", font=('Segoe UI Historic', 30, 'bold'))
         self.volume_label.place(relx=0.5, rely=0.12, anchor=tk.CENTER)
