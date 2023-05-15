@@ -1,5 +1,4 @@
 import re
-
 import pyttsx3
 import locale
 import ctypes
@@ -13,19 +12,12 @@ class TTS:
         windll = ctypes.windll.kernel32
         self.language = locale.windows_locale[windll.GetUserDefaultUILanguage()]
         if self.language == "pl_PL":
-            self.change_to_polish()
+            self.change_language("Polish")
 
-    def change_to_polish(self):
+    def change_language(self, lang):
         voices = self.engine.getProperty('voices')
         for voice in voices:
-            x = re.search("Polish", voice.name)
-            if x:
-                self.engine.setProperty('voice', voice.id)
-
-    def change_to_english(self):
-        voices = self.engine.getProperty('voices')
-        for voice in voices:
-            x = re.search("English", voice.name)
+            x = re.search(lang, voice.name)
             if x:
                 self.engine.setProperty('voice', voice.id)
 

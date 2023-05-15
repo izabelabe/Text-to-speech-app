@@ -110,7 +110,8 @@ class Settings(ctk.CTkToplevel):
     def change_language(self, key):
         if key == "POLISH":
             if self.kb.tts.language != "pl_PL":
-                self.kb.tts.change_to_polish()
+                #self.kb.tts.change_to_polish()
+                self.kb.tts.change_language("Polish")
                 self.kb.tts.language = 'pl_PL'
             self.kb.buttons['READ'].configure(text='CZYTAJ')
             self.kb.buttons['CLEAR'].configure(text='WYCZYŚĆ')
@@ -125,7 +126,8 @@ class Settings(ctk.CTkToplevel):
 
         if key == "ENGLISH":
             if self.kb.tts.language == "pl_PL":
-                self.kb.tts.change_to_english()
+                #self.kb.tts.change_to_english()
+                self.kb.tts.change_language("English")
                 self.kb.tts.language = 'en_GB'
             self.kb.buttons['READ'].configure(text='READ')
             self.kb.buttons['CLEAR'].configure(text='CLEAR')

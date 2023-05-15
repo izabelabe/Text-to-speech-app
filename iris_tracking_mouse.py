@@ -45,8 +45,7 @@ def eyeTracking():
             iris_normalizedX = normalization(begin_x, end_x, iris_x)
             iris_normalizedY = normalization((end_y - 0.04), end_y, iris_y)
 
-            iris_normalizedX2 = normalization(0.42, 0.6, iris_normalizedX)
-            #iris_normalizedY2 = normalization(0.52, 0.64, iris_normalizedY)
+            iris_normalizedX2 = normalization(0.425, 0.59, iris_normalizedX)
             iris_normalizedY2 = normalization(0.52, 0.62, iris_normalizedY)
             temp_normalized.append(iris_normalizedY)
             # temp
@@ -79,6 +78,8 @@ def eyeTracking():
             else:
                 control += 1
 
+
+
             #smoothing end
             left = [landmarks[145], landmarks[159]]
             for landmark in left:
@@ -87,7 +88,7 @@ def eyeTracking():
                 cv2.circle(frame, (x, y), 3, (0, 255, 255))
 
             if(landmarks[RIGHT_EYE[1]].y - landmarks[RIGHT_EYE[3]].y) < 0.0055 and (left[0].y - left[1].y) < 0.0055:
-                pyautogui.sleep(1)
+                pyautogui.sleep(2)
                 if(landmarks[RIGHT_EYE[1]].y - landmarks[RIGHT_EYE[3]].y) < 0.0055 and (left[0].y - left[1].y) < 0.0055:
                     pyautogui.doubleClick()
                     pyautogui.sleep(1)
