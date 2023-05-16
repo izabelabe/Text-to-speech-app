@@ -1,3 +1,4 @@
+import threading
 import time
 import tkinter as tk
 import customtkinter as ctk
@@ -32,7 +33,6 @@ class Keyboard(ctk.CTk):
         self.minsize(300, 350)
         self.resizable(True, True)
         self.wm_attributes("-topmost", 1)
-
         self.attributes('-fullscreen', True)
 
         ctk.set_appearance_mode("dark")
@@ -43,6 +43,7 @@ class Keyboard(ctk.CTk):
         self.text_box.configure(state="disabled")
         self.alt_state = False
         self.alert = None
+        self.settings = None
         for i in range(13):
             self.grid_columnconfigure(i, weight=1)
             if i <= 8:
@@ -120,14 +121,6 @@ class Keyboard(ctk.CTk):
             self.buttons['CORRECT'].configure(text='POPRAW')
             self.buttons['SPACE'].configure(text='SPACJA')
 
-    def handler(self, e):
-        while True:
-            if self.finish_flag.is_set():
-                self.destroy()
-                break
-            else:
-                time.sleep(1)
-
     def correct(self):
         txt = self.text_box.get(1.0, tk.END)
         txt = txt.lower()
@@ -181,7 +174,8 @@ class Keyboard(ctk.CTk):
             self.alt()
         elif key == 'settings':
             self.wm_attributes("-topmost", 0)
-            st.Settings(self)
+            if self.settings is None or not self.settings.winfo_exists():
+                self.settings = st.Settings(self)  # create window if its None or destroyed
         elif key == 'CORRECT':
             self.correct()
         else:
@@ -203,3 +197,11 @@ class Keyboard(ctk.CTk):
             for key in self.keys:
                 if key not in exceptions:
                     self.buttons[key].configure(text=key)
+
+    def handler(self, e):
+        while True:
+            if self.finish_flag.is_set():
+                self.destroy()
+                break
+            else:
+                time.sleep(1)

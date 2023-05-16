@@ -1,5 +1,8 @@
+import time
 import tkinter as tk
 import customtkinter as ctk
+import pyautogui
+
 import speech_synthesis as ss
 from PIL import Image
 
@@ -8,6 +11,7 @@ class Settings(ctk.CTkToplevel):
     def __init__(self, keyboard):
         super().__init__()
         self.kb = keyboard
+        self.bind('<Double-Button-1>', self.close_event)
         self.title("Settings")
         self.configure(padx=25, pady=10)
         self.geometry("%dx%d+%d+%d" % (
@@ -15,13 +19,14 @@ class Settings(ctk.CTkToplevel):
             (self.winfo_screenheight()-600) / 2))
         self.minsize(1100, 600)
         self.resizable(True, True)
+        self.attributes('-fullscreen', True)
         self.wm_attributes("-topmost",1)
         # volume
         self.volume_label = ctk.CTkLabel(master=self, text="Volume", font=('Segoe UI Historic', 30, 'bold'))
-        self.volume_label.place(relx=0.5, rely=0.12, anchor=tk.CENTER)
+        self.volume_label.place(relx=0.5, rely=0.11, anchor=tk.CENTER)
 
         self.progressbar = ctk.CTkProgressBar(master=self, progress_color='#ff8c00', width=400, height=45)
-        self.progressbar.place(relx=0.5, rely=0.25, anchor=tk.CENTER)
+        self.progressbar.place(relx=0.5, rely=0.23, anchor=tk.CENTER)
         self.progressbar.set(round(self.kb.tts.volume, 1))
 
         self.plus = ctk.CTkImage(light_image=Image.open("img/add.png"), size=(40, 40))
@@ -36,19 +41,19 @@ class Settings(ctk.CTkToplevel):
                                 hover_color="#ff8c00", font=('Segoe UI Historic', 19, 'bold'),
                                 command=lambda x="UP": update_volume(x))
 
-        self.down.place(relx=0.25, rely=0.25, anchor=tk.CENTER)
-        self.up.place(relx=0.75, rely=0.25, anchor=tk.CENTER)
+        self.down.place(relx=0.25, rely=0.23, anchor=tk.CENTER)
+        self.up.place(relx=0.75, rely=0.23, anchor=tk.CENTER)
 
         # rate
 
         self.rate_label = ctk.CTkLabel(master=self, text="Rate", font=('Segoe UI Historic', 30, 'bold'))
-        self.rate_label.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
+        self.rate_label.place(relx=0.5, rely=0.36, anchor=tk.CENTER)
 
         self.rate = ctk.CTkLabel(master=self, text=keyboard.tts.rate,
                                  font=('Segoe UI Historic', 34, 'bold'), fg_color='black', width=220, height=80,
                                  corner_radius = 10, text_color = "#fffbf7" )
 
-        self.rate.place(relx=0.5, rely=0.52, anchor=tk.CENTER)
+        self.rate.place(relx=0.5, rely=0.47, anchor=tk.CENTER)
 
         self.slower = ctk.CTkButton(self, image=self.minus, text="", height=80, width=120, text_color='white',
                                     fg_color='black',
@@ -59,13 +64,13 @@ class Settings(ctk.CTkToplevel):
                                     hover_color="#ff8c00", font=('Segoe UI Historic', 19, 'bold'),
                                     command=lambda x="FAST": update_rate(x))
 
-        self.slower.place(relx=0.25, rely=0.52, anchor=tk.CENTER)
-        self.faster.place(relx=0.75, rely=0.52, anchor=tk.CENTER)
+        self.slower.place(relx=0.25, rely=0.47, anchor=tk.CENTER)
+        self.faster.place(relx=0.75, rely=0.47, anchor=tk.CENTER)
 
         # language
         self.language_label = ctk.CTkLabel(master=self, text="Language",
                                            font=('Segoe UI Historic', 30, 'bold'))
-        self.language_label.place(relx=0.5, rely=0.70, anchor=tk.CENTER)
+        self.language_label.place(relx=0.5, rely=0.61, anchor=tk.CENTER)
 
         self.PL = ctk.CTkImage(light_image=Image.open("img/polish_flag.png"), size=(120, 80))
         self.UK = ctk.CTkImage(light_image=Image.open("img/UK_flag.png"), size=(120, 80))
@@ -78,13 +83,21 @@ class Settings(ctk.CTkToplevel):
                                      fg_color='black',
                                      hover_color="#ff8c00", font=('Segoe UI Historic', 19, 'bold'),
                                      command=lambda x="ENGLISH": self.change_language(x))
-        self.polish.place(relx=0.42, rely=0.85, anchor=tk.CENTER)
-        self.english.place(relx=0.57, rely=0.85, anchor=tk.CENTER)
+        self.polish.place(relx=0.42, rely=0.72, anchor=tk.CENTER)
+        self.english.place(relx=0.57, rely=0.72, anchor=tk.CENTER)
+
+        self.exit = ctk.CTkButton(self, text='EXIT', height=80, width=200,
+                                    fg_color='black',
+                                    hover_color="#ff8c00", font=('Segoe UI Historic', 19, 'bold'),
+                                    command=lambda: self.close())
+        self.exit.place(relx=0.5, rely=0.90, anchor=tk.CENTER)
 
         if self.kb.tts.language == "pl_PL":
             self.change_language('POLISH')
         else:
             self.english.configure(fg_color="#ff8c00")
+
+
 
         def update_volume(key):
             if key == "DOWN":
@@ -110,7 +123,6 @@ class Settings(ctk.CTkToplevel):
     def change_language(self, key):
         if key == "POLISH":
             if self.kb.tts.language != "pl_PL":
-                #self.kb.tts.change_to_polish()
                 self.kb.tts.change_language("Polish")
                 self.kb.tts.language = 'pl_PL'
             self.kb.buttons['READ'].configure(text='CZYTAJ')
@@ -120,13 +132,13 @@ class Settings(ctk.CTkToplevel):
             self.volume_label.configure(text='GŁOŚNOŚĆ')
             self.rate_label.configure(text='PRĘDKOŚĆ')
             self.language_label.configure(text='JĘZYK')
+            self.exit.configure(text="WYJDŹ")
             self.kb.buttons['ALT'].configure(state='normal')
             self.polish.configure(fg_color='#ff8c00')
             self.english.configure(fg_color='black')
 
         if key == "ENGLISH":
             if self.kb.tts.language == "pl_PL":
-                #self.kb.tts.change_to_english()
                 self.kb.tts.change_language("English")
                 self.kb.tts.language = 'en_GB'
             self.kb.buttons['READ'].configure(text='READ')
@@ -135,7 +147,20 @@ class Settings(ctk.CTkToplevel):
             self.kb.buttons['SPACE'].configure(text='SPACE')
             self.volume_label.configure(text='VOLUME')
             self.rate_label.configure(text='RATE')
+            self.exit.configure(text="EXIT")
             self.language_label.configure(text='LANGUAGE')
             self.kb.buttons['ALT'].configure(state='disabled')
             self.english.configure(fg_color='#ff8c00')
             self.polish.configure(fg_color='black')
+
+    def close_event(self, e):
+        while True:
+            if self.kb.finish_flag.is_set():
+                self.destroy()
+                pyautogui.doubleClick()
+                break
+            else:
+                time.sleep(1)
+
+    def close(self):
+        self.destroy()
