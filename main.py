@@ -1,6 +1,5 @@
 import keyboard as kb
 import start_window as sw
-import eye_tracking_mouse as et
 import iris_tracking_mouse as it
 import threading
 

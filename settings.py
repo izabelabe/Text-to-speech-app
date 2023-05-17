@@ -2,8 +2,6 @@ import time
 import tkinter as tk
 import customtkinter as ctk
 import pyautogui
-
-import speech_synthesis as ss
 from PIL import Image
 
 
@@ -12,15 +10,9 @@ class Settings(ctk.CTkToplevel):
         super().__init__()
         self.kb = keyboard
         self.bind('<Double-Button-1>', self.close_event)
-        self.title("Settings")
         self.configure(padx=25, pady=10)
-        self.geometry("%dx%d+%d+%d" % (
-            self.winfo_screenwidth() / 2, self.winfo_screenheight() / 2, (self.winfo_screenwidth()-1100)/ 2,
-            (self.winfo_screenheight()-600) / 2))
-        self.minsize(1100, 600)
-        self.resizable(True, True)
         self.attributes('-fullscreen', True)
-        self.wm_attributes("-topmost",1)
+        self.wm_attributes("-topmost", 1)
         # volume
         self.volume_label = ctk.CTkLabel(master=self, text="Volume", font=('Segoe UI Historic', 30, 'bold'))
         self.volume_label.place(relx=0.5, rely=0.11, anchor=tk.CENTER)
@@ -51,7 +43,7 @@ class Settings(ctk.CTkToplevel):
 
         self.rate = ctk.CTkLabel(master=self, text=keyboard.tts.rate,
                                  font=('Segoe UI Historic', 34, 'bold'), fg_color='black', width=220, height=80,
-                                 corner_radius = 10, text_color = "#fffbf7" )
+                                 corner_radius=10, text_color="#fffbf7")
 
         self.rate.place(relx=0.5, rely=0.47, anchor=tk.CENTER)
 
@@ -87,17 +79,15 @@ class Settings(ctk.CTkToplevel):
         self.english.place(relx=0.57, rely=0.72, anchor=tk.CENTER)
 
         self.exit = ctk.CTkButton(self, text='EXIT', height=80, width=200,
-                                    fg_color='black',
-                                    hover_color="#ff8c00", font=('Segoe UI Historic', 19, 'bold'),
-                                    command=lambda: self.close())
+                                  fg_color='black',
+                                  hover_color="#ff8c00", font=('Segoe UI Historic', 19, 'bold'),
+                                  command=lambda: self.destroy())
         self.exit.place(relx=0.5, rely=0.90, anchor=tk.CENTER)
 
         if self.kb.tts.language == "pl_PL":
             self.change_language('POLISH')
         else:
             self.english.configure(fg_color="#ff8c00")
-
-
 
         def update_volume(key):
             if key == "DOWN":
@@ -106,7 +96,6 @@ class Settings(ctk.CTkToplevel):
             else:
                 if self.kb.tts.volume != 1.0:
                     self.kb.tts.volume += 0.1
-            # self.volume.configure(text=round(self.kb.tts.volume, 1))
             self.progressbar.set(round(self.kb.tts.volume, 1))
             self.kb.tts.engine.setProperty('volume', self.kb.tts.volume)
 
@@ -157,10 +146,8 @@ class Settings(ctk.CTkToplevel):
         while True:
             if self.kb.finish_flag.is_set():
                 self.destroy()
-                pyautogui.doubleClick()
+                pyautogui.doubleClick() #added to trigger event handler on a base window
                 break
             else:
                 time.sleep(1)
 
-    def close(self):
-        self.destroy()

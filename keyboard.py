@@ -1,4 +1,3 @@
-import threading
 import time
 import tkinter as tk
 import customtkinter as ctk
@@ -23,15 +22,11 @@ def text_correction(text, polish):
 class Keyboard(ctk.CTk):
     def __init__(self, finish_flag):
         super().__init__()
-        self.title("Keyboard")
         self.finish_flag = finish_flag
         self.bind('<Double-Button-1>', self.handler)
         self.configure(padx=25, pady=10)
-        self.width = self.winfo_screenwidth()
+        self.width = self.winfo_screenwidth()  #used for alert box
         self.height = self.winfo_screenheight() - 70
-        self.geometry("%dx%d+%d+%d" % (self.width, self.height, -9, -1))
-        self.minsize(300, 350)
-        self.resizable(True, True)
         self.wm_attributes("-topmost", 1)
         self.attributes('-fullscreen', True)
 
@@ -40,7 +35,9 @@ class Keyboard(ctk.CTk):
         self.buttons = {}
         self.text_box = ctk.CTkTextbox(self, padx=25, pady=25, height=5, font=('Segoe UI Historic', 30, "bold"),
                                        text_color="black", wrap=tk.WORD)
-        self.text_box.configure(state="disabled")
+        self.text_box.grid(row=0, column=0, columnspan=13, rowspan=3, sticky="nsew")
+        self.text_box.configure(state="disabled", corner_radius=50, fg_color="#c9c9c9")
+
         self.alt_state = False
         self.alert = None
         self.settings = None
@@ -48,9 +45,6 @@ class Keyboard(ctk.CTk):
             self.grid_columnconfigure(i, weight=1)
             if i <= 8:
                 self.grid_rowconfigure(i, weight=1)
-
-        self.text_box.grid(row=0, column=0, columnspan=13, rowspan=3, sticky="nsew")
-        self.text_box.configure(state="disabled", corner_radius=50, fg_color="#c9c9c9")
 
         self.keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '#', 'Backspace',
                      'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',

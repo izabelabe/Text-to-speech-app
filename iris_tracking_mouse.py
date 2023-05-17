@@ -14,7 +14,6 @@ def eyeTracking():
     face_mesh = mp.solutions.face_mesh.FaceMesh(refine_landmarks=True)
     screen_w, screen_h = pyautogui.size()
     pyautogui.FAILSAFE = False
-    temp_normalized = []
     temp_y = []
     temp_x = []
     control = 0
@@ -36,7 +35,6 @@ def eyeTracking():
             begin_x = landmarks[RIGHT_EYE[0]].x
             end_x = landmarks[RIGHT_EYE[2]].x
 
-            #begin_y = landmarks[RIGHT_EYE[3]].y
             end_y = landmarks[RIGHT_EYE[1]].y
 
             iris_x = (landmarks[476].x + landmarks[474].x) / 2
@@ -44,10 +42,9 @@ def eyeTracking():
 
             iris_normalizedX = normalization(begin_x, end_x, iris_x)
             iris_normalizedY = normalization((end_y - 0.04), end_y, iris_y)
-
             iris_normalizedX2 = normalization(0.425, 0.59, iris_normalizedX)
             iris_normalizedY2 = normalization(0.52, 0.62, iris_normalizedY)
-            temp_normalized.append(iris_normalizedY)
+
             # temp
             if landmark_points:
                 landmarks = landmark_points[0].landmark
@@ -77,10 +74,9 @@ def eyeTracking():
                 pyautogui.sleep(0.05)
             else:
                 control += 1
-
-
-
             #smoothing end
+
+
             left = [landmarks[145], landmarks[159]]
             for landmark in left:
                 x = int(landmark.x * frame_w)
