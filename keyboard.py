@@ -8,24 +8,22 @@ from autocorrect import Speller
 from wrapt_timeout_decorator import *
 
 
-@timeout(1)
+@timeout(10)
 def text_correction(text, polish):
     if polish:
-        spell = Speller('pl')
+        spell = Speller("pl")
     else:
         spell = Speller()
     corrected = spell(text)
-
     return corrected
 
 
 class Keyboard(ctk.CTk):
-    def __init__(self, finish_flag):
+    def __init__(self):
         super().__init__()
-        self.finish_flag = finish_flag
         self.bind('<Double-Button-1>', self.handler)
         self.configure(padx=25, pady=10)
-        self.width = self.winfo_screenwidth()  #used for alert box
+        self.width = self.winfo_screenwidth()  # used for alert box
         self.height = self.winfo_screenheight() - 70
         self.wm_attributes("-topmost", 1)
         self.attributes('-fullscreen', True)
@@ -123,6 +121,7 @@ class Keyboard(ctk.CTk):
                 result = text_correction(txt, 0)
             else:
                 result = text_correction(txt, 1)
+            print(result)
             self.text_box.delete(1.0, tk.END)
             self.text_box.insert(tk.INSERT, result.upper())
         except TimeoutError:
@@ -193,9 +192,4 @@ class Keyboard(ctk.CTk):
                     self.buttons[key].configure(text=key)
 
     def handler(self, e):
-        while True:
-            if self.finish_flag.is_set():
-                self.destroy()
-                break
-            else:
-                time.sleep(1)
+        self.destroy()

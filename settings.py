@@ -27,11 +27,11 @@ class Settings(ctk.CTkToplevel):
         self.down = ctk.CTkButton(self, image=self.minus, text="", height=80, width=120, text_color='white',
                                   fg_color='black',
                                   hover_color="#ff8c00", font=('Segoe UI Historic', 19, 'bold'),
-                                  command=lambda x="DOWN": update_volume(x))
+                                  command=lambda x="DOWN": self.update_volume(x))
         self.up = ctk.CTkButton(self, image=self.plus, text="", height=80, width=120, text_color='white',
                                 fg_color='black',
                                 hover_color="#ff8c00", font=('Segoe UI Historic', 19, 'bold'),
-                                command=lambda x="UP": update_volume(x))
+                                command=lambda x="UP": self.update_volume(x))
 
         self.down.place(relx=0.25, rely=0.23, anchor=tk.CENTER)
         self.up.place(relx=0.75, rely=0.23, anchor=tk.CENTER)
@@ -50,11 +50,11 @@ class Settings(ctk.CTkToplevel):
         self.slower = ctk.CTkButton(self, image=self.minus, text="", height=80, width=120, text_color='white',
                                     fg_color='black',
                                     hover_color="#ff8c00", font=('Segoe UI Historic', 19, 'bold'),
-                                    command=lambda x="SLOW": update_rate(x))
+                                    command=lambda x="SLOW": self.update_rate(x))
         self.faster = ctk.CTkButton(self, image=self.plus, text="", height=80, width=120, text_color='white',
                                     fg_color='black',
                                     hover_color="#ff8c00", font=('Segoe UI Historic', 19, 'bold'),
-                                    command=lambda x="FAST": update_rate(x))
+                                    command=lambda x="FAST": self.update_rate(x))
 
         self.slower.place(relx=0.25, rely=0.47, anchor=tk.CENTER)
         self.faster.place(relx=0.75, rely=0.47, anchor=tk.CENTER)
@@ -89,25 +89,25 @@ class Settings(ctk.CTkToplevel):
         else:
             self.english.configure(fg_color="#ff8c00")
 
-        def update_volume(key):
-            if key == "DOWN":
-                if self.kb.tts.volume > 0.01:
-                    self.kb.tts.volume -= 0.1
-            else:
-                if self.kb.tts.volume != 1.0:
-                    self.kb.tts.volume += 0.1
-            self.progressbar.set(round(self.kb.tts.volume, 1))
-            self.kb.tts.engine.setProperty('volume', self.kb.tts.volume)
+    def update_volume(self, key):
+        if key == "DOWN":
+            if self.kb.tts.volume > 0.01:
+                self.kb.tts.volume -= 0.1
+        else:
+            if self.kb.tts.volume != 1.0:
+                self.kb.tts.volume += 0.1
+        self.progressbar.set(round(self.kb.tts.volume, 1))
+        self.kb.tts.engine.setProperty('volume', self.kb.tts.volume)
 
-        def update_rate(key):
-            if key == "SLOW":
-                if self.kb.tts.rate > 70:
-                    self.kb.tts.rate -= 2
-            else:
-                if self.kb.tts.rate < 330:
-                    self.kb.tts.rate += 2
-            self.rate.configure(text=self.kb.tts.rate)
-            self.kb.tts.engine.setProperty('rate', self.kb.tts.rate)
+    def update_rate(self, key):
+        if key == "SLOW":
+            if self.kb.tts.rate > 70:
+                self.kb.tts.rate -= 2
+        else:
+            if self.kb.tts.rate < 330:
+                self.kb.tts.rate += 2
+        self.rate.configure(text=self.kb.tts.rate)
+        self.kb.tts.engine.setProperty('rate', self.kb.tts.rate)
 
     def change_language(self, key):
         if key == "POLISH":
@@ -143,11 +143,7 @@ class Settings(ctk.CTkToplevel):
             self.polish.configure(fg_color='black')
 
     def close_event(self, e):
-        while True:
-            if self.kb.finish_flag.is_set():
-                self.destroy()
-                pyautogui.doubleClick() #added to trigger event handler on a base window
-                break
-            else:
-                time.sleep(1)
+            self.destroy()
+            pyautogui.doubleClick() #added to trigger event handler on a base window
+
 

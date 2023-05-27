@@ -31,10 +31,8 @@ def eyeTracking():
             # 374 - dol
             # 263 - zewnetrzny rog
             # 385 - gora
-            # dół - powyżej 0.5 tym większa wartość im mniejsza odległość między powiekami?
             begin_x = landmarks[RIGHT_EYE[0]].x
             end_x = landmarks[RIGHT_EYE[2]].x
-
             end_y = landmarks[RIGHT_EYE[1]].y
 
             iris_x = (landmarks[476].x + landmarks[474].x) / 2
@@ -46,12 +44,12 @@ def eyeTracking():
             iris_normalizedY2 = normalization(0.52, 0.62, iris_normalizedY)
 
             # temp
-            if landmark_points:
-                landmarks = landmark_points[0].landmark
-                for id, landmark in enumerate(landmarks[474:478]):
-                    x = int(landmark.x * frame_w)
-                    y = int(landmark.y * frame_h)
-                    cv2.circle(frame, (x, y), 3, (0, 255, 0))
+            #if landmark_points:
+            #    landmarks = landmark_points[0].landmark
+            #    for id, landmark in enumerate(landmarks[474:478]):
+            #        x = int(landmark.x * frame_w)
+            #        y = int(landmark.y * frame_h)
+            #        cv2.circle(frame, (x, y), 3, (0, 255, 0))
             # end temp
 
             screen_x = round(int(iris_normalizedX2 * screen_w), 2)
@@ -78,23 +76,22 @@ def eyeTracking():
 
 
             left = [landmarks[145], landmarks[159]]
-            for landmark in left:
-                x = int(landmark.x * frame_w)
-                y = int(landmark.y * frame_h)
-                cv2.circle(frame, (x, y), 3, (0, 255, 255))
+            #for landmark in left:
+            #    x = int(landmark.x * frame_w)
+            #    y = int(landmark.y * frame_h)
+            #    cv2.circle(frame, (x, y), 3, (0, 255, 255))
 
             if(landmarks[RIGHT_EYE[1]].y - landmarks[RIGHT_EYE[3]].y) < 0.0055 and (left[0].y - left[1].y) < 0.0055:
                 pyautogui.sleep(2)
                 if(landmarks[RIGHT_EYE[1]].y - landmarks[RIGHT_EYE[3]].y) < 0.0055 and (left[0].y - left[1].y) < 0.0055:
                     pyautogui.doubleClick()
-                    pyautogui.sleep(1)
                     break
             elif (left[0].y - left[1].y) < 0.0045:
                 pyautogui.click()
                 pyautogui.sleep(1)
 
 
-        cv2.imshow('Eye Controlled Mouse', frame)
-        cv2.waitKey(1)
+        #cv2.imshow('Eye Controlled Mouse', frame)
+        #cv2.waitKey(1)
 
 
